@@ -38,8 +38,6 @@ class Pong:
         self.punteggio_giocatore_1 = 0
         self.punteggio_giocatore_2 = 0
         self.velocitaRacchettaSingolo = 2.7  #2.9 o 3 aumenta il livello di difficolta'
-        self.x_testo_rivincita = 145
-        self.y_testo_rivincita = 370
         self.x_testo_esci = 550
         self.y_testo_esci = 370
         self.colore_freccia_superiore = VERDE
@@ -163,9 +161,9 @@ class Pong:
     
     def tasto_premuto_giocatore_singolo(self,tasto):
         if tasto == pygame.K_UP:
-            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()-8)
+            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()-4)
         elif tasto == pygame.K_DOWN:
-            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()+8)
+            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()+4)
         
     def tasto_lasciato_giocatore_singolo(self,tasto):
         if tasto == pygame.K_UP or tasto == pygame.K_DOWN:
@@ -240,26 +238,26 @@ class Pong:
         font_giocatore_singolo = pygame.font.SysFont(None,30,False,True)
         font_punteggio_giocatore_1 = pygame.font.SysFont(None,80,True,False)
         font_punteggio_giocatore_2 = pygame.font.SysFont(None,80,True,False)
-        testo_font_giocatore_singolo = font_giocatore_singolo.render("GIOCATORE SINGOLO! Punteggio (obiettivo: "+str(self.getGoal())+"): ",True,ROSSO)
+        testo_font_giocatore_singolo = font_giocatore_singolo.render(f"GIOCATORE SINGOLO! Punteggio (obiettivo: {self.goal}): ",True,ROSSO)
         testo_font_punteggio_giocatore_1 = font_punteggio_giocatore_1.render(str(self.get_punteggio_giocatore_1()),True,ROSSO)
         testo_font_punteggio_giocatore_2 = font_punteggio_giocatore_2.render(str(self.get_punteggio_giocatore_2()),True,ROSSO)
-        linea_sinistra = pygame.draw.line(schermata,NERO,(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,0),(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
-        linea_di_mezzo = pygame.draw.line(schermata,NERO,(self.LARGHEZZA//2,0),(self.LARGHEZZA//2,self.ALTEZZA),1)
-        linea_destra = pygame.draw.line(schermata,NERO,(self.x_racchetta_2+self.LARGHEZZA_racchetta//2,0),(self.x_racchetta_2+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
-        contorno = pygame.draw.circle(schermata,NERO,(self.LARGHEZZA//2,self.ALTEZZA//2),self.raggio_palla+1,2)
+        pygame.draw.line(schermata,NERO,(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,0),(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
+        pygame.draw.line(schermata,NERO,(self.LARGHEZZA//2,0),(self.LARGHEZZA//2,self.ALTEZZA),1)
+        pygame.draw.line(schermata,NERO,(self.x_racchetta_2+self.LARGHEZZA_racchetta//2,0),(self.x_racchetta_2+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
+        pygame.draw.circle(schermata,NERO,(self.LARGHEZZA//2,self.ALTEZZA//2),self.raggio_palla+1,2)
         schermata.blit(testo_font_giocatore_singolo,(217,10))
         schermata.blit(testo_font_punteggio_giocatore_1,(350,35))
         schermata.blit(testo_font_punteggio_giocatore_2,(510,35))
-        trattino_punteggio = pygame.draw.rect(schermata,ROSSO,(430,55,40,10),0)
+        pygame.draw.rect(schermata,ROSSO,(430,55,40,10),0)
         return testo_font_punteggio_giocatore_1,testo_font_punteggio_giocatore_2
     
     def freccie_surf(self,surf):
-        coordinate_rettangolo_freccia_superiore = pygame.draw.rect(surf,self.colore_freccia_superiore,(self.LARGHEZZA_surf//2-5,155,10,60),0)
-        coordinate_rettangolo_freccia_inferiore = pygame.draw.rect(surf,self.colore_freccia_inferiore,(self.LARGHEZZA_surf//2-5,255,10,60),0)
+        pygame.draw.rect(surf,self.colore_freccia_superiore,(self.LARGHEZZA_surf//2-5,155,10,60),0)
+        pygame.draw.rect(surf,self.colore_freccia_inferiore,(self.LARGHEZZA_surf//2-5,255,10,60),0)
         coordinate_triangolo_freccia_superiore = [[self.LARGHEZZA_surf//2-5-10,155],[self.LARGHEZZA_surf//2-5+20,155],[self.LARGHEZZA_surf//2,125]]
         coordinate_triangolo_freccia_inferiore = [[self.LARGHEZZA_surf//2-5-10,255+60],[self.LARGHEZZA_surf//2-5+20,255+60],[self.LARGHEZZA_surf//2,345]]
-        triangolo_freccia_superiore = pygame.draw.polygon(surf,self.colore_freccia_superiore,coordinate_triangolo_freccia_superiore,0)
-        triangolo_freccia_inferiore = pygame.draw.polygon(surf,self.colore_freccia_inferiore,coordinate_triangolo_freccia_inferiore,0)
+        pygame.draw.polygon(surf,self.colore_freccia_superiore,coordinate_triangolo_freccia_superiore,0)
+        pygame.draw.polygon(surf,self.colore_freccia_inferiore,coordinate_triangolo_freccia_inferiore,0)
     
     def schermata_pre_gioco(self,schermata):
         surf = pygame.Surface((self.LARGHEZZA_surf,self.ALTEZZA_surf))
@@ -276,7 +274,7 @@ class Pong:
         surf.blit(surf_testo_2,(130,50))
         surf.blit(surf_testo_giocatore_singolo,(220,90))
         surf.blit(surf_testo_multigiocatore,(250,350))
-        palla_grande_surf = pygame.draw.circle(surf,VERDE,(self.LARGHEZZA_surf//2,self.ALTEZZA_surf//2),15)
+        pygame.draw.circle(surf,VERDE,(self.LARGHEZZA_surf//2,self.ALTEZZA_surf//2),15)
         self.freccie_surf(surf)
         schermata.blit(surf,(40,40))   
     
@@ -285,17 +283,17 @@ class Pong:
         font_multigiocatore = pygame.font.SysFont(None,30,False,True)
         font_punteggio_giocatore_1 = pygame.font.SysFont(None,80,True,False)
         font_punteggio_giocatore_2 = pygame.font.SysFont(None,80,True,False)
-        testo_font_multigiocatore = font_multigiocatore.render("MULTIGIOCATORE! Punteggio (obiettivo: 11): ",True,ROSSO)
+        testo_font_multigiocatore = font_multigiocatore.render(f"MULTIGIOCATORE! Punteggio (obiettivo: {self.goal}): ",True,ROSSO)
         testo_font_punteggio_giocatore_1 = font_punteggio_giocatore_1.render(str(self.get_punteggio_giocatore_1()),True,ROSSO)
         testo_font_punteggio_giocatore_2 = font_punteggio_giocatore_2.render(str(self.get_punteggio_giocatore_2()),True,ROSSO)
-        linea_sinistra = pygame.draw.line(schermata,NERO,(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,0),(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
-        linea_di_mezzo = pygame.draw.line(schermata,NERO,(self.LARGHEZZA//2,0),(self.LARGHEZZA//2,self.ALTEZZA),1)
-        linea_destra = pygame.draw.line(schermata,NERO,(self.get_x_racchetta_2()+self.LARGHEZZA_racchetta//2,0),(self.get_x_racchetta_2()+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
-        contorno = pygame.draw.circle(schermata,NERO,(self.LARGHEZZA//2,self.ALTEZZA//2),self.get_raggio_palla()+1,2)
+        pygame.draw.line(schermata,NERO,(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,0),(self.get_x_racchetta_1()+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
+        pygame.draw.line(schermata,NERO,(self.LARGHEZZA//2,0),(self.LARGHEZZA//2,self.ALTEZZA),1)
+        pygame.draw.line(schermata,NERO,(self.get_x_racchetta_2()+self.LARGHEZZA_racchetta//2,0),(self.get_x_racchetta_2()+self.LARGHEZZA_racchetta//2,self.ALTEZZA),1)
+        pygame.draw.circle(schermata,NERO,(self.LARGHEZZA//2,self.ALTEZZA//2),self.get_raggio_palla()+1,2)
         schermata.blit(testo_font_multigiocatore,(230,10))
         schermata.blit(testo_font_punteggio_giocatore_1,(350,35))
         schermata.blit(testo_font_punteggio_giocatore_2,(510,35))
-        trattino_punteggio = pygame.draw.rect(schermata,ROSSO,(430,55,40,10),0)
+        pygame.draw.rect(schermata,ROSSO,(430,55,40,10),0)
         return testo_font_punteggio_giocatore_1,testo_font_punteggio_giocatore_2
     
     def movimento_multigiocatore(self,schermata):
@@ -338,62 +336,6 @@ class Pong:
         elif tasto == pygame.K_DOWN:
             self.vel_y_racchetta_2=0
     
-
-    
-    def giocatore_1_vincitore(self,schermata):
-        surf_vincitore_2 = pygame.Surface((self.LARGHEZZA_surf,self.ALTEZZA_surf))
-        surf_vincitore_2.fill(BIANCO)
-        premio_1 = pygame.font.SysFont(None,95,True,False)
-        premio_2 = pygame.font.SysFont(None,70,True,False)
-        testo_premio = premio_1.render("CONGRATULAZIONI!",True,NERO)
-        testo_premio_giocatore_2 = premio_2.render("GIOCATORE 1, HAI VINTO!!!",True,NERO)
-        rivincita = pygame.font.SysFont(None,70,False,True)
-        esci = pygame.font.SysFont(None,70,False,True)
-        testo_rivincita = rivincita.render("RIVINCITA",True,ROSSO)
-        testo_esci = esci.render("ESCI",True,ROSSO)
-        surf_vincitore_2.blit(testo_premio,(20,20))
-        surf_vincitore_2.blit(testo_premio_giocatore_2,(30,120))
-        surf_vincitore_2.blit(testo_rivincita,(self.x_testo_rivincita,self.y_testo_rivincita))
-        surf_vincitore_2.blit(testo_esci,(self.x_testo_esci,self.y_testo_esci))
-        rect_testo_rivincita = pygame.draw.rect(surf_vincitore_2,NERO,(self.x_testo_rivincita-5,self.y_testo_rivincita-5,260,50),2)
-        rect_testo_esci = pygame.draw.rect(surf_vincitore_2,NERO,(self.x_testo_esci-5,self.y_testo_esci-5,135,50),2)
-        schermata.fill(ROSA)
-        self.disegna_racchette(schermata)
-        schermata.blit(surf_vincitore_2,(40,40))
-        pygame.display.update()
-        pygame.mixer.music.stop()
-        musica_schermata_iniziale = pygame.mixer.music.load("pong_schermata_iniziale.mp3")
-        pygame.mixer.music.play(-1)
-    
-        return rect_testo_esci
-    
-    def giocatore_2_vincitore(self,schermata):
-        surf_vincitore_2 = pygame.Surface((self.LARGHEZZA_surf,self.ALTEZZA_surf))
-        surf_vincitore_2.fill(BIANCO)
-        premio_1 = pygame.font.SysFont(None,95,True,False)
-        premio_2 = pygame.font.SysFont(None,70,True,False)
-        testo_premio = premio_1.render("CONGRATULAZIONI!",True,NERO)
-        testo_premio_giocatore_2 = premio_2.render("GIOCATORE 2, HAI VINTO!!!",True,NERO)
-        rivincita = pygame.font.SysFont(None,70,False,True)
-        esci = pygame.font.SysFont(None,70,False,True)
-        testo_rivincita = rivincita.render("RIVINCITA",True,ROSSO)
-        testo_esci = esci.render("ESCI",True,ROSSO)
-        surf_vincitore_2.blit(testo_premio,(20,20))
-        surf_vincitore_2.blit(testo_premio_giocatore_2,(30,120))
-        surf_vincitore_2.blit(testo_rivincita,(self.x_testo_rivincita,self.y_testo_rivincita))
-        surf_vincitore_2.blit(testo_esci,(self.x_testo_esci,self.y_testo_esci))
-        rect_testo_rivincita = pygame.draw.rect(surf_vincitore_2,NERO,(self.x_testo_rivincita-5,self.y_testo_rivincita-5,260,50),2)
-        rect_testo_esci = pygame.draw.rect(surf_vincitore_2,NERO,(self.x_testo_esci-5,self.y_testo_esci-5,135,50),2)   
-        schermata.fill(ROSA)
-        pong.disegna_racchette(schermata)
-        schermata.blit(surf_vincitore_2,(40,40))
-        pygame.display.update()
-        pygame.mixer.music.stop()
-        musica_schermata_iniziale = pygame.mixer.music.load("pong_schermata_iniziale.mp3")
-        pygame.mixer.music.play(-1)
-    
-        return rect_testo_esci
-    
     def mostra_vincitore(self, schermata, numero_giocatore):
         surf = pygame.Surface((self.LARGHEZZA_surf, self.ALTEZZA_surf))
         surf.fill(BIANCO)
@@ -404,20 +346,11 @@ class Pong:
 
         titolo = font_titolo.render("CONGRATULAZIONI!", True, NERO)
         msg = font_msg.render(f"GIOCATORE {numero_giocatore}, HAI VINTO!!!", True, BLU)
-        btn_rivincita = font_btn.render("RIVINCITA", True, ROSSO)
-        btn_esci = font_btn.render("ESCI", True, ROSSO)
-
         rect_titolo = titolo.get_rect(center=(self.LARGHEZZA_surf//2, 100))
         rect_msg = msg.get_rect(center=(self.LARGHEZZA_surf//2, 200))
-        rect_riv = btn_rivincita.get_rect(center=(self.LARGHEZZA_surf//2, 320))
-        rect_exit = btn_esci.get_rect(center=(self.LARGHEZZA_surf//2, 420))
 
-        pygame.draw.rect(surf, NERO, rect_riv.inflate(30, 15), 2)
-        pygame.draw.rect(surf, NERO, rect_exit.inflate(30, 15), 2)
         surf.blit(titolo, rect_titolo)
         surf.blit(msg, rect_msg)
-        surf.blit(btn_rivincita, rect_riv)
-        surf.blit(btn_esci, rect_exit)
 
         schermata.fill(ROSA)
         schermata.blit(surf, (40, 40))
@@ -430,13 +363,6 @@ class Pong:
                 if evento.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-                elif evento.type == pygame.MOUSEBUTTONDOWN:
-                    if rect_riv.inflate(30, 15).collidepoint(evento.pos):
-                        scelta = "rivincita"
-                        in_loop = False
-                    elif rect_exit.inflate(30, 15).collidepoint(evento.pos):
-                        scelta = "esci"
-                        in_loop = False
 
             self.orologio.tick(self.FPS)
 
@@ -524,19 +450,6 @@ if __name__ == "__main__":
             scelta = pong.mostra_vincitore(schermata, 1)
         elif pong.get_punteggio_giocatore_2() == pong.getGoal():
             scelta = pong.mostra_vincitore(schermata, 2)
-
-        if scelta == "rivincita":
-            # Reset punteggi e restart partita
-            pong.set_punteggio_giocatore_1(0)
-            pong.set_punteggio_giocatore_2(0)
-            pong.x_palla, pong.y_palla = pong.LARGHEZZA//2, pong.ALTEZZA//2
-            pong.vel_x_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
-            pong.vel_y_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
-            # qui potresti richiamare il loop di gioco di nuovo
-            schermata_surf_aperta = True
-        elif scelta == "esci":
-            pygame.quit()
-        exit()
     else:  #multigiocatore
         pong.disegna_schermata()
         schermata.fill(ROSA)
@@ -567,20 +480,6 @@ if __name__ == "__main__":
             scelta = pong.mostra_vincitore(schermata, 1)
         elif pong.get_punteggio_giocatore_2() == pong.getGoal():
             scelta = pong.mostra_vincitore(schermata, 2)
-
-        if scelta == "rivincita":
-            # Reset punteggi e restart partita
-            pong.set_punteggio_giocatore_1(0)
-            pong.set_punteggio_giocatore_2(0)
-            pong.x_palla, pong.y_palla = pong.LARGHEZZA//2, pong.ALTEZZA//2
-            pong.vel_x_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
-            pong.vel_y_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
-            # qui potresti richiamare il loop di gioco di nuovo
-        elif scelta == "esci":
-            pygame.quit()
-            exit()
-                        
-            pong.getOrologio().tick(pong.getFPS()) 
 
     finale_aperto = True
     while finale_aperto:
