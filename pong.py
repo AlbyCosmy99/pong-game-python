@@ -32,7 +32,7 @@ class Pong:
         self.vel_y_racchetta_2 = 0
         self.x_palla = self.LARGHEZZA//2
         self.y_palla = self.ALTEZZA//2
-        self.vel_xy_palla = 0.8
+        self.vel_xy_palla = 1
         self.vel_x_palla=random.choice([-self.vel_xy_palla,self.vel_xy_palla])
         self.vel_y_palla=random.choice([-self.vel_xy_palla,self.vel_xy_palla])
         self.punteggio_giocatore_1 = 0
