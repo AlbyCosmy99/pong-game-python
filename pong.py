@@ -32,7 +32,7 @@ class Pong:
         self.vel_y_racchetta_2 = 0
         self.x_palla = self.LARGHEZZA//2
         self.y_palla = self.ALTEZZA//2
-        self.vel_xy_palla = 2.5
+        self.vel_xy_palla = 0.8
         self.vel_x_palla=random.choice([-self.vel_xy_palla,self.vel_xy_palla])
         self.vel_y_palla=random.choice([-self.vel_xy_palla,self.vel_xy_palla])
         self.punteggio_giocatore_1 = 0
@@ -163,9 +163,9 @@ class Pong:
     
     def tasto_premuto_giocatore_singolo(self,tasto):
         if tasto == pygame.K_UP:
-            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()-10)
+            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()-8)
         elif tasto == pygame.K_DOWN:
-            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()+10)
+            self.setVel_y_racchetta_1(self.getVel_y_racchetta_1()+8)
         
     def tasto_lasciato_giocatore_singolo(self,tasto):
         if tasto == pygame.K_UP or tasto == pygame.K_DOWN:
@@ -319,13 +319,13 @@ class Pong:
     
     def tasto_premuto_multigiocatore(self,tasto):
         if tasto == pygame.K_w:
-            self.vel_y_racchetta_1-=10
+            self.vel_y_racchetta_1-=8
         elif tasto == pygame.K_s:
-            self.vel_y_racchetta_1+=10
+            self.vel_y_racchetta_1+=8
         elif tasto == pygame.K_UP:
-            self.vel_y_racchetta_2-=10
+            self.vel_y_racchetta_2-=8
         elif tasto == pygame.K_DOWN:
-            self.vel_y_racchetta_2+=10
+            self.vel_y_racchetta_2+=8
         
     
     def tasto_lasciato_multigiocatore(self,tasto):
@@ -393,10 +393,56 @@ class Pong:
         pygame.mixer.music.play(-1)
     
         return rect_testo_esci
-
     
-#inizio programma                               
-                  
+    def mostra_vincitore(self, schermata, numero_giocatore):
+        surf = pygame.Surface((self.LARGHEZZA_surf, self.ALTEZZA_surf))
+        surf.fill(BIANCO)
+
+        font_titolo = pygame.font.SysFont(None, 95, True, False)
+        font_msg = pygame.font.SysFont(None, 70, True, False)
+        font_btn = pygame.font.SysFont(None, 60, True, False)
+
+        titolo = font_titolo.render("CONGRATULAZIONI!", True, NERO)
+        msg = font_msg.render(f"GIOCATORE {numero_giocatore}, HAI VINTO!!!", True, BLU)
+        btn_rivincita = font_btn.render("RIVINCITA", True, ROSSO)
+        btn_esci = font_btn.render("ESCI", True, ROSSO)
+
+        rect_titolo = titolo.get_rect(center=(self.LARGHEZZA_surf//2, 100))
+        rect_msg = msg.get_rect(center=(self.LARGHEZZA_surf//2, 200))
+        rect_riv = btn_rivincita.get_rect(center=(self.LARGHEZZA_surf//2, 320))
+        rect_exit = btn_esci.get_rect(center=(self.LARGHEZZA_surf//2, 420))
+
+        pygame.draw.rect(surf, NERO, rect_riv.inflate(30, 15), 2)
+        pygame.draw.rect(surf, NERO, rect_exit.inflate(30, 15), 2)
+        surf.blit(titolo, rect_titolo)
+        surf.blit(msg, rect_msg)
+        surf.blit(btn_rivincita, rect_riv)
+        surf.blit(btn_esci, rect_exit)
+
+        schermata.fill(ROSA)
+        schermata.blit(surf, (40, 40))
+        pygame.display.update()
+
+        scelta = None
+        in_loop = True
+        while in_loop:
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                elif evento.type == pygame.MOUSEBUTTONDOWN:
+                    if rect_riv.inflate(30, 15).collidepoint(evento.pos):
+                        scelta = "rivincita"
+                        in_loop = False
+                    elif rect_exit.inflate(30, 15).collidepoint(evento.pos):
+                        scelta = "esci"
+                        in_loop = False
+
+            self.orologio.tick(self.FPS)
+
+        return scelta
+
+#inizio programma                                           
 if __name__ == "__main__":
     pygame.init()
     
@@ -415,7 +461,7 @@ if __name__ == "__main__":
     schermata_surf_aperta = True
     
     #schermata iniziale
-    
+
     while schermata_surf_aperta:
         pygame.init()
         for evento_surf in pygame.event.get():
@@ -474,10 +520,23 @@ if __name__ == "__main__":
 
         x = 0
 
-        if pong.get_punteggio_giocatore_1()==pong.getGoal():
-            pong.giocatore_1_vincitore(schermata)    
-        elif pong.get_punteggio_giocatore_2()==pong.getGoal():
-            pong.giocatore_2_vincitore(schermata)
+        if pong.get_punteggio_giocatore_1() == pong.getGoal():
+            scelta = pong.mostra_vincitore(schermata, 1)
+        elif pong.get_punteggio_giocatore_2() == pong.getGoal():
+            scelta = pong.mostra_vincitore(schermata, 2)
+
+        if scelta == "rivincita":
+            # Reset punteggi e restart partita
+            pong.set_punteggio_giocatore_1(0)
+            pong.set_punteggio_giocatore_2(0)
+            pong.x_palla, pong.y_palla = pong.LARGHEZZA//2, pong.ALTEZZA//2
+            pong.vel_x_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
+            pong.vel_y_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
+            # qui potresti richiamare il loop di gioco di nuovo
+            schermata_surf_aperta = True
+        elif scelta == "esci":
+            pygame.quit()
+        exit()
     else:  #multigiocatore
         pong.disegna_schermata()
         schermata.fill(ROSA)
@@ -504,9 +563,28 @@ if __name__ == "__main__":
                 elif pong.get_punteggio_giocatore_1()==pong.getGoal() or pong.get_punteggio_giocatore_2()==pong.getGoal():
                     nessun_vincitore = False
                     gioco_multigiocatore_aperto = False
-        if pong.get_punteggio_giocatore_1()==pong.getGoal():
-                pong.giocatore_1_vincitore(schermata)                     
-        elif pong.get_punteggio_giocatore_2()==pong.getGoal():
-            pong.giocatore_2_vincitore(schermata)               
+        if pong.get_punteggio_giocatore_1() == pong.getGoal():
+            scelta = pong.mostra_vincitore(schermata, 1)
+        elif pong.get_punteggio_giocatore_2() == pong.getGoal():
+            scelta = pong.mostra_vincitore(schermata, 2)
+
+        if scelta == "rivincita":
+            # Reset punteggi e restart partita
+            pong.set_punteggio_giocatore_1(0)
+            pong.set_punteggio_giocatore_2(0)
+            pong.x_palla, pong.y_palla = pong.LARGHEZZA//2, pong.ALTEZZA//2
+            pong.vel_x_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
+            pong.vel_y_palla = random.choice([-pong.vel_xy_palla, pong.vel_xy_palla])
+            # qui potresti richiamare il loop di gioco di nuovo
+        elif scelta == "esci":
+            pygame.quit()
+            exit()
                         
             pong.getOrologio().tick(pong.getFPS()) 
+
+    finale_aperto = True
+    while finale_aperto:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                finale_aperto = False
+        pong.getOrologio().tick(pong.getFPS())
