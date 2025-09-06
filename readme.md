@@ -86,3 +86,9 @@ Then select **single-player** or **multiplayer** mode on the start screen and pl
 ---
 
 👉 This project is special to me because it represents my **first step into programming**: building a classic game from scratch while learning Python, back in 2019.
+
+---
+
+## 📸 Screenshot
+![Anteprima progetto](assets/anteprima1.png)
+![Anteprima progetto](assets/anteprima2.png)
