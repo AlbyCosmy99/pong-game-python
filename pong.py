@@ -379,7 +379,7 @@ if __name__ == "__main__":
     pong.disegna_racchette(schermata)
     pong.disegna_palla(schermata)
     pong.schermata_pre_gioco(schermata)
-    musica_schermata_iniziale = pygame.mixer.music.load("pong_schermata_iniziale.mp3")
+    musica_schermata_iniziale = pygame.mixer.music.load("assets/pong_schermata_iniziale.mp3")
     #loop infinito della canzone
     pygame.mixer.music.play(-1)
     pygame.display.update()
@@ -417,7 +417,7 @@ if __name__ == "__main__":
     schermata.fill(ROSA)
 
     pygame.display.update()
-    musica = pygame.mixer.music.load("pong_musica.mp3")
+    musica = pygame.mixer.music.load("assets/pong_musica.mp3")
     pygame.mixer.music.play(-1)
     
     #giocatore singolo
@@ -455,7 +455,7 @@ if __name__ == "__main__":
         schermata.fill(ROSA)
         pygame.mixer.music.stop()
         pygame.display.update()
-        musica = pygame.mixer.music.load("pong_musica.mp3")
+        musica = pygame.mixer.music.load("assets/pong_musica.mp3")
         pygame.mixer.music.play(-1)
 
         gioco_multigiocatore_aperto = True
