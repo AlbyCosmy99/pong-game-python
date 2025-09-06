@@ -3,7 +3,7 @@
 This is a **Pong clone** I wrote back in 2019 during the last months of high school as one of my first real coding projects.  
 It was my way to approach programming by mixing two passions: **videogames and coding** 🎮.
 
-👉 **Download Linux executable from here: https://albycosmy99.itch.io/pong-game**  
+👉 **[Download](https://albycosmy99.itch.io/pong-game) Linux executable**  
 
 ---
 
