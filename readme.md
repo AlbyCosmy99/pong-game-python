@@ -90,5 +90,5 @@ Then select **single-player** or **multiplayer** mode on the start screen and pl
 ---
 
 ## 📸 Screenshot
-![Anteprima progetto](assets/anteprima1.png)
-![Anteprima progetto](assets/anteprima2.png)
+![Anteprima progetto](assets/anteprima1.jpeg)
+![Anteprima progetto](assets/anteprima2.jpeg)
