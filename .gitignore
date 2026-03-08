@@ -1,1 +1,3 @@
-Pong-x86_64.AppImage
+build/
+dist/
+*.AppImage

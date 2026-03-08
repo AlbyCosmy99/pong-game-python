@@ -2,7 +2,20 @@
 Gioco Pong. La schermata di 'congratulazioni' e' incompleta.
 """
 
-import pygame, random
+from pathlib import Path
+import random
+import sys
+
+import pygame
+
+
+def resource_path(*parts):
+    if getattr(sys, "frozen", False):
+        base_path = Path(getattr(sys, "_MEIPASS", Path(sys.executable).resolve().parent))
+    else:
+        base_path = Path(__file__).resolve().parent
+
+    return str(base_path.joinpath(*parts))
 
  #colori
 ROSA = pygame.Color("Pink")
@@ -490,14 +503,14 @@ if __name__ == "__main__":
     applicazione_aperta = True
 
     while applicazione_aperta:
-        avvia_musica("assets/pong_schermata_iniziale.mp3")
+        avvia_musica(resource_path("assets", "pong_schermata_iniziale.mp3"))
         mod_multigiocatore = mostra_menu_iniziale(pong, schermata)
 
         if mod_multigiocatore is None:
             applicazione_aperta = False
             continue
 
-        avvia_musica("assets/pong_musica.mp3")
+        avvia_musica(resource_path("assets", "pong_musica.mp3"))
 
         while applicazione_aperta:
             vincitore = gioca_partita(pong, schermata, mod_multigiocatore)
