@@ -158,6 +158,20 @@ class Pong:
     
     def setColoreFrecciaSuperiore(self,colore_freccia_superiore):
         self.colore_freccia_superiore = colore_freccia_superiore
+
+    def reimposta_partita(self):
+        self.set_x_racchetta_1(5)
+        self.set_y_racchetta_1(self.ALTEZZA//2-self.ALTEZZA_racchetta//2)
+        self.set_x_racchetta_2(self.LARGHEZZA-self.LARGHEZZA_racchetta-5)
+        self.set_y_racchetta_2(self.ALTEZZA//2-self.ALTEZZA_racchetta//2)
+        self.setVel_y_racchetta_1(0)
+        self.setVel_y_racchetta_2(0)
+        self.set_x_palla(self.LARGHEZZA//2)
+        self.set_y_palla(self.ALTEZZA//2)
+        self.setVel_x_palla(random.choice([-self.get_vel_xy_palla(),self.get_vel_xy_palla()]))
+        self.setVel_y_palla(random.choice([-self.get_vel_xy_palla(),self.get_vel_xy_palla()]))
+        self.set_punteggio_giocatore_1(0)
+        self.set_punteggio_giocatore_2(0)
     
     def tasto_premuto_giocatore_singolo(self,tasto):
         if tasto == pygame.K_UP:
@@ -347,153 +361,159 @@ class Pong:
             self.vel_y_racchetta_2=0
     
     def mostra_vincitore(self, schermata, numero_giocatore):
-        surf = pygame.Surface((self.LARGHEZZA_surf, self.ALTEZZA_surf))
-        surf.fill(BIANCO)
+        opzioni = [("RIVINCITA", "rivincita"), ("TORNA AL MENU", "menu"), ("ESCI", "esci")]
+        indice_opzione = 0
 
-        font_titolo = pygame.font.SysFont(None, 95, True, False)
-        font_msg = pygame.font.SysFont(None, 70, True, False)
-        font_btn = pygame.font.SysFont(None, 60, True, False)
+        while True:
+            surf = pygame.Surface((self.LARGHEZZA_surf, self.ALTEZZA_surf))
+            surf.fill(BIANCO)
 
-        titolo = font_titolo.render("CONGRATULAZIONI!", True, NERO)
-        msg = font_msg.render(f"GIOCATORE {numero_giocatore}, HAI VINTO!!!", True, BLU)
-        rect_titolo = titolo.get_rect(center=(self.LARGHEZZA_surf//2, 100))
-        rect_msg = msg.get_rect(center=(self.LARGHEZZA_surf//2, 200))
+            font_titolo = pygame.font.SysFont(None, 95, True, False)
+            font_msg = pygame.font.SysFont(None, 70, True, False)
+            font_btn = pygame.font.SysFont(None, 48, True, False)
+            font_info = pygame.font.SysFont(None, 28, False, False)
 
-        surf.blit(titolo, rect_titolo)
-        surf.blit(msg, rect_msg)
+            titolo = font_titolo.render("CONGRATULAZIONI!", True, NERO)
+            msg = font_msg.render(f"GIOCATORE {numero_giocatore}, HAI VINTO!!!", True, BLU)
+            info = font_info.render("Usa SU/GIU e premi INVIO per selezionare", True, ROSSO)
+            rect_titolo = titolo.get_rect(center=(self.LARGHEZZA_surf//2, 100))
+            rect_msg = msg.get_rect(center=(self.LARGHEZZA_surf//2, 200))
+            rect_info = info.get_rect(center=(self.LARGHEZZA_surf//2, 255))
 
-        schermata.fill(ROSA)
-        schermata.blit(surf, (40, 40))
-        pygame.display.update()
+            surf.blit(titolo, rect_titolo)
+            surf.blit(msg, rect_msg)
+            surf.blit(info, rect_info)
 
-        scelta = None
-        in_loop = True
-        while in_loop:
+            for indice, (testo_opzione, _) in enumerate(opzioni):
+                colore_opzione = ROSSO if indice == indice_opzione else NERO
+                testo_render = font_btn.render(testo_opzione, True, colore_opzione)
+                rect_opzione = testo_render.get_rect(center=(self.LARGHEZZA_surf//2, 325 + indice*60))
+                surf.blit(testo_render, rect_opzione)
+
+            schermata.fill(ROSA)
+            schermata.blit(surf, (40, 40))
+            pygame.display.update()
+
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+                    return "esci"
+                elif evento.type == pygame.KEYDOWN:
+                    if evento.key == pygame.K_UP:
+                        indice_opzione = (indice_opzione - 1) % len(opzioni)
+                    elif evento.key == pygame.K_DOWN:
+                        indice_opzione = (indice_opzione + 1) % len(opzioni)
+                    elif evento.key == pygame.K_RETURN:
+                        return opzioni[indice_opzione][1]
 
             self.orologio.tick(self.FPS)
 
-        return scelta
+def avvia_musica(percorso_file):
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load(percorso_file)
+    pygame.mixer.music.play(-1)
 
-#inizio programma                                           
-if __name__ == "__main__":
-    pygame.init()
-    
-    pong = Pong()
-    
-    schermata = pong.disegna_schermata()
+
+def mostra_menu_iniziale(pong, schermata):
+    pong.reimposta_partita()
+    pong.setColoreFrecciaSuperiore(VERDE)
+    pong.setColoreFrecciaInferiore(VERDE)
+
     schermata.fill(ROSA)
     pong.disegna_racchette(schermata)
     pong.disegna_palla(schermata)
     pong.schermata_pre_gioco(schermata)
-    musica_schermata_iniziale = pygame.mixer.music.load("assets/pong_schermata_iniziale.mp3")
-    #loop infinito della canzone
-    pygame.mixer.music.play(-1)
     pygame.display.update()
 
-    schermata_surf_aperta = True
-    
-    #schermata iniziale
-
-    while schermata_surf_aperta:
-        pygame.init()
+    while True:
         for evento_surf in pygame.event.get():
             if evento_surf.type==pygame.QUIT:
-                pygame.quit()
+                return None
             elif evento_surf.type==pygame.KEYDOWN:
                 if evento_surf.key==pygame.K_UP:
                     pong.setColoreFrecciaSuperiore(ROSSO)
                     pong.setColoreFrecciaInferiore(VERDE)
                     pong.schermata_pre_gioco(schermata)
-                    pygame.display.update()                
+                    pygame.display.update()
                 elif evento_surf.key==pygame.K_DOWN:
                     pong.setColoreFrecciaInferiore(ROSSO)
                     pong.setColoreFrecciaSuperiore(VERDE)
                     pong.schermata_pre_gioco(schermata)
                     pygame.display.update()
-                if pong.getColoreFrecciaInferiore()==ROSSO:
-                    if evento_surf.key==pygame.K_RETURN:                     
-                        mod_multigiocatore = True
-                        schermata_surf_aperta = False
-                elif pong.getColoreFrecciaSuperiore()==ROSSO:
-                    if evento_surf.key==pygame.K_RETURN:
-                        mod_multigiocatore = False
-                        schermata_surf_aperta = False
-                    
-    schermata = pong.disegna_schermata()
-    schermata.fill(ROSA)
+                elif evento_surf.key==pygame.K_RETURN:
+                    if pong.getColoreFrecciaInferiore()==ROSSO:
+                        return True
+                    elif pong.getColoreFrecciaSuperiore()==ROSSO:
+                        return False
 
-    pygame.display.update()
-    musica = pygame.mixer.music.load("assets/pong_musica.mp3")
-    pygame.mixer.music.play(-1)
-    
-    #giocatore singolo
-
-    if not mod_multigiocatore:
-        gioco_giocatore_singolo_aperto = True
-        nessun_vincitore = True
-        
-        while nessun_vincitore: 
-            while gioco_giocatore_singolo_aperto: 
-                for evento in pygame.event.get():
-                    if evento.type==pygame.QUIT:
-                        gioco_giocatore_singolo_aperto = False
-                    elif evento.type==pygame.KEYDOWN: #or evento.type==pygame.KEYUP:
-                        pong.tasto_premuto_giocatore_singolo(evento.key)
-                    elif evento.type==pygame.KEYUP:
-                        pong.tasto_lasciato_giocatore_singolo(evento.key)
-                pong.movimento_giocatore_singolo(schermata)
-                if not gioco_giocatore_singolo_aperto:
-                    pygame.quit()
-                elif pong.get_punteggio_giocatore_1()==pong.getGoal() or pong.get_punteggio_giocatore_2()==pong.getGoal(): 
-                        nessun_vincitore = False  
-                        gioco_giocatore_singolo_aperto = False
-   
-            pong.getOrologio().tick(pong.getFPS())
-
-        x = 0
-
-        if pong.get_punteggio_giocatore_1() == pong.getGoal():
-            scelta = pong.mostra_vincitore(schermata, 1)
-        elif pong.get_punteggio_giocatore_2() == pong.getGoal():
-            scelta = pong.mostra_vincitore(schermata, 2)
-    else:  #multigiocatore
-        pong.disegna_schermata()
-        schermata.fill(ROSA)
-        pygame.mixer.music.stop()
-        pygame.display.update()
-        musica = pygame.mixer.music.load("assets/pong_musica.mp3")
-        pygame.mixer.music.play(-1)
-
-        gioco_multigiocatore_aperto = True
-        nessun_vincitore = True
-
-        while nessun_vincitore:        
-            while gioco_multigiocatore_aperto:
-                for evento in pygame.event.get():
-                    if evento.type==pygame.QUIT:                
-                        gioco_multigiocatore_aperto = False
-                    elif evento.type==pygame.KEYDOWN:
-                        pong.tasto_premuto_multigiocatore(evento.key)
-                    elif evento.type==pygame.KEYUP:             
-                        pong.tasto_lasciato_multigiocatore(evento.key)        
-                pong.movimento_multigiocatore(schermata)
-                if not gioco_multigiocatore_aperto:
-                    pygame.quit()
-                elif pong.get_punteggio_giocatore_1()==pong.getGoal() or pong.get_punteggio_giocatore_2()==pong.getGoal():
-                    nessun_vincitore = False
-                    gioco_multigiocatore_aperto = False
-        if pong.get_punteggio_giocatore_1() == pong.getGoal():
-            scelta = pong.mostra_vincitore(schermata, 1)
-        elif pong.get_punteggio_giocatore_2() == pong.getGoal():
-            scelta = pong.mostra_vincitore(schermata, 2)
-
-    finale_aperto = True
-    while finale_aperto:
-        for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
-                finale_aperto = False
         pong.getOrologio().tick(pong.getFPS())
+
+
+def gioca_partita(pong, schermata, mod_multigiocatore):
+    pong.reimposta_partita()
+    schermata.fill(ROSA)
+    pygame.display.update()
+
+    while True:
+        for evento in pygame.event.get():
+            if evento.type==pygame.QUIT:
+                return None
+            elif evento.type==pygame.KEYDOWN:
+                if mod_multigiocatore:
+                    pong.tasto_premuto_multigiocatore(evento.key)
+                else:
+                    pong.tasto_premuto_giocatore_singolo(evento.key)
+            elif evento.type==pygame.KEYUP:
+                if mod_multigiocatore:
+                    pong.tasto_lasciato_multigiocatore(evento.key)
+                else:
+                    pong.tasto_lasciato_giocatore_singolo(evento.key)
+
+        if mod_multigiocatore:
+            pong.movimento_multigiocatore(schermata)
+        else:
+            pong.movimento_giocatore_singolo(schermata)
+
+        if pong.get_punteggio_giocatore_1()==pong.getGoal():
+            return 1
+        elif pong.get_punteggio_giocatore_2()==pong.getGoal():
+            return 2
+
+        pong.getOrologio().tick(pong.getFPS())
+
+
+#inizio programma
+if __name__ == "__main__":
+    pygame.init()
+
+    pong = Pong()
+    schermata = pong.disegna_schermata()
+    applicazione_aperta = True
+
+    while applicazione_aperta:
+        avvia_musica("assets/pong_schermata_iniziale.mp3")
+        mod_multigiocatore = mostra_menu_iniziale(pong, schermata)
+
+        if mod_multigiocatore is None:
+            applicazione_aperta = False
+            continue
+
+        avvia_musica("assets/pong_musica.mp3")
+
+        while applicazione_aperta:
+            vincitore = gioca_partita(pong, schermata, mod_multigiocatore)
+
+            if vincitore is None:
+                applicazione_aperta = False
+                break
+
+            scelta = pong.mostra_vincitore(schermata, vincitore)
+
+            if scelta == "rivincita":
+                continue
+            elif scelta == "menu":
+                break
+            else:
+                applicazione_aperta = False
+                break
+
+    pygame.quit()
